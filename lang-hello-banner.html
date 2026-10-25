@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hello</title>
+<style>
+:root{--g:#8a6a43;--ink:#3a2e22;--mute:rgba(58,46,34,.58);--line:rgba(138,106,67,.5);--line2:rgba(138,106,67,.22);--bg:#f7f0e4;--wash2:#efe3cf;--on-g:#fffaf2;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:transparent}
+body{padding:6px;color:var(--ink);font:15px/1.45 var(--font);-webkit-font-smoothing:antialiased}
+.wide{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:20px;background:var(--bg);overflow:hidden;width:100%;color:inherit;text-decoration:none;cursor:pointer;transition:background .18s,border-color .18s}
+.wide:hover,.wide:focus-visible{background:var(--wash2);border-color:var(--g);outline:none}
+.half{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px;padding:18px 22px}
+.half.r{text-align:right;align-items:flex-end}
+.mid{width:1.5px;background:var(--line2);margin:16px 0;flex:none}
+.kick{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--g);font-weight:700;display:flex;gap:8px;align-items:center}
+.half.l .kick::before,.half.r .kick::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--g);flex:none}
+.hello{font-size:clamp(20px,3.2vw,30px);font-weight:700;line-height:1.2;letter-spacing:-.01em}
+.hello em{font-style:normal;color:var(--g)}
+.tip{font-size:clamp(15px,2vw,19px);font-weight:600;line-height:1.35;max-width:46ch}
+.meta{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.cta{margin-top:auto;padding-top:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;color:var(--g);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;transition:background .18s,color .18s}
+.wide:hover .pill{background:var(--g);color:var(--on-g);border-color:var(--g)}
+.pill .ar{transition:transform .18s}
+.wide:hover .pill .ar{transform:translateX(3px)}
+@media (max-width:560px){.wide{flex-direction:column}.mid{width:auto;height:1.5px;margin:0 16px}.half.r{text-align:left;align-items:flex-start}.half.r .kick{flex-direction:row-reverse;justify-content:flex-end}.half{padding:16px 18px}}
+</style></head>
+<body>
+<a class="wide" href="https://notomantra.gumroad.com/l/language-learning-os" target="_blank" rel="noopener">
+<div class="half l">
+<div class="kick" id="k1"></div>
+<div class="hello" id="hi"></div>
+<div class="meta" id="dt"></div>
+<div class="cta"><span class="pill"><span>Language Learning OS</span><span class="ar">&rarr;</span></span></div>
+</div>
+<div class="mid"></div>
+<div class="half r">
+<div class="kick" id="k2"></div>
+<div class="tip" id="tip"></div>
+<div class="meta" id="nt"></div>
+<div class="cta"><span class="pill"><span>Track every language in one place</span><span class="ar">&rarr;</span></span></div>
+</div>
+</a>
+<script>
+const $=s=>document.querySelector(s);
+// [language, morning, afternoon, evening, night]
+const HELLO=[
+['French','Bonjour','Bon après-midi','Bonsoir','Bonne nuit'],
+['Spanish','Buenos días','Buenas tardes','Buenas tardes','Buenas noches'],
+['German','Guten Morgen','Guten Tag','Guten Abend','Gute Nacht'],
+['Italian','Buongiorno','Buon pomeriggio','Buonasera','Buonanotte'],
+['Japanese','Ohayō','Konnichiwa','Konbanwa','Oyasumi'],
+['Korean','Annyeong','Annyeong','Annyeong','Jal ja'],
+['Portuguese','Bom dia','Boa tarde','Boa noite','Boa noite']
+];
+const EN=['Good morning.','Good afternoon.','Good evening.','Still up?'];
+const TIPS={
+0:['Morning brain loves new words. Learn 5 now, review them tonight.','Say three things you will do today out loud, in your target language.','Ten minutes before your phone beats an hour you never start.'],
+1:['Change one app on your phone to your target language. Just one.','Lunch break? Shadow a 2-minute clip: listen, pause, repeat.','Write today\'s to-do list in your target language. Messy is fine.'],
+2:['Review beats new. Go over yesterday\'s words before adding more.','Watch one scene with target-language subtitles, not English.','Write three sentences about your day. Look up only one word.'],
+3:['Quick review now and sleep will do the remembering for you.','Tired? Just read your word list once. That still counts.','Plan tomorrow\'s 10 minutes now so future you doesn\'t have to decide.']
+};
+const NOTES=['Streaks are nice. Seeing the whole journey is better.','Apps track streaks. This tracks the big picture.','Words, grammar, sessions and goals, all in one place.','Small sessions, logged, add up to fluency.'];
+function slot(h){return h<5?3:h<12?0:h<17?1:h<21?2:3}
+function render(){
+  const d=new Date(),h=d.getHours(),s=slot(h);
+  const day=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);
+  const L=HELLO[day%HELLO.length];
+  const word=s===3?L[4]:L[1+s];
+  $('#k1').textContent='Hello in '+L[0];
+  $('#hi').innerHTML='<em>'+word+'</em>. '+EN[s];
+  $('#dt').textContent=d.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  $('#k2').textContent='Today\'s practice tip';
+  const t=TIPS[s];$('#tip').textContent=t[day%t.length];
+  $('#nt').textContent=NOTES[day%NOTES.length];
+}
+render();setInterval(render,30000);
+</script>
+</body></html>
